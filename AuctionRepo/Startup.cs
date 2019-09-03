@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AuctionRepo.Implementations;
+using AuctionRepo.Interfaces;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -11,10 +13,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Practise.Implements;
-using Practise.Interfaces;
 
-namespace Practise
+namespace AuctionRepo
 {
     public class Startup
     {
@@ -28,20 +28,9 @@ namespace Practise
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<BiddingsContext>(Options => Options.UseSqlServer(@"Data Source=YW850\MSSQLSERVER01; Initial catalog=EdApp; Integrated security=true;"));
-            services.AddTransient<IBiddings, Biddings>();
-            services.AddTransient<IListBiddings, Biddings>();
-
-            services.AddCors(options =>
-            {
-                options.AddDefaultPolicy(
-                    builder =>
-                    {
-                        builder.WithOrigins("https://localhost:44315").AllowCredentials();
-                        //builder.WithOrigins("https://localhost:44315", "http://localhost:54795").AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin().AllowCredentials();
-                    });
-            });
-
+            services.AddDbContext<DBContext>(options => options.UseSqlServer(@"Data Source=YW850\MSSQLSERVER01; Initial catalog=EdApp; Integrated security=true;"));
+            services.AddTransient<IWinner, Winner>();
+            services.AddTransient<IListItems, ListItems>();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
 
@@ -57,6 +46,7 @@ namespace Practise
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+
             app.UseHttpsRedirection();
             app.UseMvc();
         }
